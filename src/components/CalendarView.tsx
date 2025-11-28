@@ -37,7 +37,7 @@ export default function CalendarView({ clients, posts, onPostClick }: CalendarVi
   return (
     <div className="calendar-view">
       <div className="calendar-header">
-        <h1>Posting Calendar</h1>
+        <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>Posting Calendar</h1>
         <div className="calendar-controls">
           <button onClick={previousMonth} className="calendar-nav-btn">
             <ChevronLeft size={20} />
@@ -76,16 +76,16 @@ export default function CalendarView({ clients, posts, onPostClick }: CalendarVi
                       onClick={() => onPostClick(post)}
                       title={`${clients.find(c => c.id === post.clientId)?.name || 'Unknown'}: ${post.content.substring(0, 30)}...`}
                     >
-                      <span className="post-time">
+                      <span style={{ fontSize: '0.625rem', fontWeight: 700, opacity: 0.9 }}>
                         {format(new Date(post.scheduledDate), 'HH:mm')}
                       </span>
-                      <span className="post-preview">
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {post.content.substring(0, 20)}...
                       </span>
                     </div>
                   ))}
                   {dayPosts.length > 3 && (
-                    <div className="calendar-post-more">
+                    <div style={{ padding: '0.25rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600 }}>
                       +{dayPosts.length - 3} more
                     </div>
                   )}
@@ -96,13 +96,13 @@ export default function CalendarView({ clients, posts, onPostClick }: CalendarVi
         </div>
       </div>
 
-      <div className="calendar-legend">
-        <h3>Clients</h3>
-        <div className="legend-items">
+      <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
+        <h3 style={{ marginBottom: '1rem', fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>Clients</h3>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem' }}>
           {clients.map(client => (
-            <div key={client.id} className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: client.color }}></div>
-              <span>{client.name}</span>
+            <div key={client.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ width: '20px', height: '20px', borderRadius: 'var(--radius)', backgroundColor: client.color, boxShadow: 'var(--shadow)' }}></div>
+              <span style={{ color: 'var(--text-secondary)' }}>{client.name}</span>
             </div>
           ))}
         </div>

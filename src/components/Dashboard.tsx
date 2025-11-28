@@ -15,7 +15,6 @@ export default function Dashboard() {
   const [isPostEditorOpen, setIsPostEditorOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
 
-  // Load data from localStorage on mount
   useEffect(() => {
     const savedClients = localStorage.getItem('sm-clients');
     const savedPosts = localStorage.getItem('sm-posts');
@@ -28,14 +27,12 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Save clients to localStorage whenever they change
   useEffect(() => {
     if (clients.length > 0 || localStorage.getItem('sm-clients')) {
       localStorage.setItem('sm-clients', JSON.stringify(clients));
     }
   }, [clients]);
 
-  // Save posts to localStorage whenever they change
   useEffect(() => {
     if (posts.length > 0 || localStorage.getItem('sm-posts')) {
       localStorage.setItem('sm-posts', JSON.stringify(posts));
@@ -82,12 +79,9 @@ export default function Dashboard() {
   };
 
   const handleImport = (importedClients: Client[], importedPosts: Post[]) => {
-    // Merge imported clients with existing (avoid duplicates by name)
     const existingClientNames = new Set(clients.map(c => c.name.toLowerCase()));
     const newClients = importedClients.filter(c => !existingClientNames.has(c.name.toLowerCase()));
     setClients([...clients, ...newClients]);
-
-    // Add imported posts
     setPosts([...posts, ...importedPosts]);
   };
 
@@ -124,39 +118,38 @@ export default function Dashboard() {
           />
         )}
         {activeView === 'posts' && (
-          <div className="posts-list-view">
+          <div className="card">
             <div className="view-header">
               <h1>All Posts</h1>
               <button className="btn-primary" onClick={handleNewPost}>
                 + New Post
               </button>
             </div>
-            <div className="posts-grid">
+            <div className="clients-grid">
               {posts.map(post => {
                 const client = clients.find(c => c.id === post.clientId);
                 return (
-                  <div key={post.id} className="post-card">
-                    <div className="post-card-header">
-                      <span className="client-badge" style={{ backgroundColor: client?.color || '#6366f1' }}>
-                        {client?.name || 'Unknown'}
-                      </span>
-                      <span className="post-status" data-status={post.status}>
-                        {post.status}
-                      </span>
+                  <div key={post.id} className="client-card">
+                    <div className="client-card-header" style={{ background: client?.color || '#6366f1' }}>
+                      <h2>{client?.name || 'Unknown'}</h2>
                     </div>
-                    <h3>{post.content.substring(0, 50)}...</h3>
-                    <p className="post-date">
-                      {new Date(post.scheduledDate).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
-                    <div className="post-card-actions">
-                      <button onClick={() => handleEditPost(post)}>Edit</button>
-                      <button onClick={() => handleDeletePost(post.id)} className="btn-danger">Delete</button>
+                    <div className="client-card-body">
+                      <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                        {post.content.substring(0, 100)}...
+                      </p>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>
+                        {new Date(post.scheduledDate).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                    <div className="client-card-actions">
+                      <button className="btn-icon" onClick={() => handleEditPost(post)}>Edit</button>
+                      <button className="btn-icon" onClick={() => handleDeletePost(post.id)}>Delete</button>
                     </div>
                   </div>
                 );

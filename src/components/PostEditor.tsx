@@ -53,18 +53,16 @@ export default function PostEditor({ post, clients, onSave, onClose }: PostEdito
     onSave(postData);
   };
 
-  const selectedClient = clients.find(c => c.id === formData.clientId);
-
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content post-editor-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{post ? 'Edit Post' : 'Create New Post'}</h2>
           <button className="modal-close" onClick={onClose}>
             <X size={24} />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="post-form">
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Client *</label>
             <select
@@ -79,41 +77,34 @@ export default function PostEditor({ post, clients, onSave, onClose }: PostEdito
                 </option>
               ))}
             </select>
-            {selectedClient && (
-              <div className="client-preview" style={{ borderLeftColor: selectedClient.color }}>
-                <span style={{ color: selectedClient.color }}>{selectedClient.name}</span>
-              </div>
-            )}
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Platform *</label>
-              <select
-                value={formData.platform}
-                onChange={(e) => setFormData({ ...formData, platform: e.target.value })}
-                required
-              >
-                {PLATFORM_OPTIONS.map(platform => (
-                  <option key={platform} value={platform}>{platform}</option>
-                ))}
-              </select>
-            </div>
+          <div className="form-group">
+            <label>Platform *</label>
+            <select
+              value={formData.platform}
+              onChange={(e) => setFormData({ ...formData, platform: e.target.value })}
+              required
+            >
+              {PLATFORM_OPTIONS.map(platform => (
+                <option key={platform} value={platform}>{platform}</option>
+              ))}
+            </select>
+          </div>
 
-            <div className="form-group">
-              <label>Status *</label>
-              <select
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value as typeof formData.status })}
-                required
-              >
-                {STATUS_OPTIONS.map(status => (
-                  <option key={status} value={status}>
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="form-group">
+            <label>Status *</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value as typeof formData.status })}
+              required
+            >
+              {STATUS_OPTIONS.map(status => (
+                <option key={status} value={status}>
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
@@ -134,8 +125,8 @@ export default function PostEditor({ post, clients, onSave, onClose }: PostEdito
               rows={6}
               placeholder="Write your post content here..."
               required
+              style={{ minHeight: '120px', resize: 'vertical' }}
             />
-            <div className="char-count">{formData.content.length} characters</div>
           </div>
 
           <div className="form-group">

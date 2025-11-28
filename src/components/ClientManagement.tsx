@@ -50,12 +50,6 @@ export default function ClientManagement({ clients, onAddClient, onUpdateClient,
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingClient(null);
-    setFormData({
-      name: '',
-      email: '',
-      color: COLOR_OPTIONS[0],
-      platforms: []
-    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -90,7 +84,7 @@ export default function ClientManagement({ clients, onAddClient, onUpdateClient,
   };
 
   return (
-    <div className="client-management">
+    <div>
       <div className="view-header">
         <h1>Client Management</h1>
         <button className="btn-primary" onClick={() => handleOpenModal()}>
@@ -102,11 +96,11 @@ export default function ClientManagement({ clients, onAddClient, onUpdateClient,
       <div className="clients-grid">
         {clients.map(client => (
           <div key={client.id} className="client-card">
-            <div className="client-card-header" style={{ backgroundColor: client.color }}>
+            <div className="client-card-header" style={{ background: client.color }}>
               <h2>{client.name}</h2>
             </div>
             <div className="client-card-body">
-              {client.email && <p className="client-email">{client.email}</p>}
+              {client.email && <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', fontSize: '0.875rem' }}>{client.email}</p>}
               <div className="client-platforms">
                 {client.platforms.map(platform => (
                   <span key={platform} className="platform-badge">{platform}</span>
@@ -114,10 +108,10 @@ export default function ClientManagement({ clients, onAddClient, onUpdateClient,
               </div>
             </div>
             <div className="client-card-actions">
-              <button onClick={() => handleOpenModal(client)} className="btn-icon">
+              <button className="btn-icon" onClick={() => handleOpenModal(client)}>
                 <Edit size={18} />
               </button>
-              <button onClick={() => onDeleteClient(client.id)} className="btn-icon btn-danger">
+              <button className="btn-icon" onClick={() => onDeleteClient(client.id)}>
                 <Trash2 size={18} />
               </button>
             </div>
@@ -137,7 +131,7 @@ export default function ClientManagement({ clients, onAddClient, onUpdateClient,
               <h2>{editingClient ? 'Edit Client' : 'Add New Client'}</h2>
               <button className="modal-close" onClick={handleCloseModal}>×</button>
             </div>
-            <form onSubmit={handleSubmit} className="client-form">
+            <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Client Name *</label>
                 <input
@@ -157,23 +151,30 @@ export default function ClientManagement({ clients, onAddClient, onUpdateClient,
               </div>
               <div className="form-group">
                 <label>Color</label>
-                <div className="color-picker">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '0.75rem' }}>
                   {COLOR_OPTIONS.map(color => (
                     <button
                       key={color}
                       type="button"
-                      className={`color-option ${formData.color === color ? 'selected' : ''}`}
-                      style={{ backgroundColor: color }}
                       onClick={() => setFormData({ ...formData, color })}
+                      style={{
+                        width: '100%',
+                        aspectRatio: 1,
+                        border: formData.color === color ? '3px solid var(--text-primary)' : '3px solid transparent',
+                        borderRadius: 'var(--radius)',
+                        backgroundColor: color,
+                        cursor: 'pointer',
+                        transition: 'var(--transition)'
+                      }}
                     />
                   ))}
                 </div>
               </div>
               <div className="form-group">
                 <label>Platforms</label>
-                <div className="platform-checkboxes">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
                   {PLATFORM_OPTIONS.map(platform => (
-                    <label key={platform} className="platform-checkbox">
+                    <label key={platform} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.875rem', border: '1px solid var(--border)', borderRadius: 'var(--radius)', background: 'var(--bg-secondary)', transition: 'var(--transition)' }}>
                       <input
                         type="checkbox"
                         checked={formData.platforms.includes(platform)}

@@ -8,7 +8,6 @@ interface DataImportProps {
 }
 
 export default function DataImport({ onImport, onClose }: DataImportProps) {
-  const [importMethod, setImportMethod] = useState<'csv' | 'manual'>('csv');
   const [csvData, setCsvData] = useState('');
   const [importStatus, setImportStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -18,11 +17,10 @@ export default function DataImport({ onImport, onClose }: DataImportProps) {
       return null;
     }
 
-    // Try different date formats
     const formats = [
-      /(\d{2})\/(\d{2})/g, // DD/MM
-      /(\d{2})-(\d{2})/g,  // DD-MM
-      /(\d{1,2})\/(\d{1,2})/g, // D/M or DD/MM
+      /(\d{2})\/(\d{2})/g,
+      /(\d{2})-(\d{2})/g,
+      /(\d{1,2})\/(\d{1,2})/g,
     ];
 
     for (const format of formats) {
@@ -30,7 +28,7 @@ export default function DataImport({ onImport, onClose }: DataImportProps) {
       if (match) {
         const parts = match[0].split(/[\/-]/);
         const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+        const month = parseInt(parts[1], 10) - 1;
         const currentYear = new Date().getFullYear();
         const date = new Date(currentYear, month, day);
         if (!isNaN(date.getTime())) {
@@ -52,21 +50,12 @@ export default function DataImport({ onImport, onClose }: DataImportProps) {
       '#3b82f6', '#14b8a6', '#84cc16', '#f97316'
     ];
 
-    // Skip header rows (first 3 rows typically)
     const dataRows = lines.slice(3);
 
     dataRows.forEach((line, rowIndex) => {
-      // Split by tab or comma
       const columns = line.split(/\t|,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
       
       if (columns.length < 4) return;
-
-      // Column structure based on your sheet:
-      // Column 1: ID/number
-      // Column 2: Client Name
-      // Column 3: Pack Name (Custom, Premium, etc.)
-      // Column 4: Pack Contents (8 posts, 20 posts, etc.)
-      // Columns 5+: Dates
 
       const clientName = columns[1]?.trim();
       const packName = columns[2]?.trim();
@@ -76,20 +65,18 @@ export default function DataImport({ onImport, onClose }: DataImportProps) {
         return;
       }
 
-      // Create or find client
       let client = clients.find(c => c.name === clientName);
       if (!client) {
         client = {
           id: `client-${Date.now()}-${rowIndex}`,
           name: clientName,
           color: clientColors[clients.length % clientColors.length],
-          platforms: ['Instagram', 'Facebook'], // Default, can be updated
+          platforms: ['Instagram', 'Facebook'],
           createdAt: new Date().toISOString()
         };
         clients.push(client);
       }
 
-      // Parse dates from remaining columns (starting from column 5, index 4)
       for (let i = 4; i < columns.length; i++) {
         const dateValue = columns[i]?.trim();
         if (!dateValue || dateValue === '' || dateValue === 'x' || dateValue === '?' || dateValue === 'paused') {
@@ -98,13 +85,12 @@ export default function DataImport({ onImport, onClose }: DataImportProps) {
 
         const date = parseDate(dateValue);
         if (date) {
-          // Create a post for this date
           const post: Post = {
             id: `post-${Date.now()}-${rowIndex}-${i}`,
             clientId: client.id,
             content: `${packName || 'Post'} - ${packContents || 'Scheduled post'}`,
             scheduledDate: date.toISOString(),
-            platform: 'Instagram', // Default, can be updated
+            platform: 'Instagram',
             status: dateValue === 'x' ? 'published' : 'scheduled',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
@@ -117,26 +103,9 @@ export default function DataImport({ onImport, onClose }: DataImportProps) {
     return { clients, posts };
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result as string;
-      setCsvData(text);
-    };
-    reader.readAsText(file);
-  };
-
-  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    const pastedText = event.clipboardData.getData('text');
-    setCsvData(pastedText);
-  };
-
   const handleImport = () => {
     if (!csvData.trim()) {
-      setErrorMessage('Please paste or upload CSV data');
+      setErrorMessage('Please paste CSV data');
       setImportStatus('error');
       return;
     }
@@ -148,7 +117,7 @@ export default function DataImport({ onImport, onClose }: DataImportProps) {
       const { clients, posts } = parseCSV(csvData);
       
       if (clients.length === 0) {
-        setErrorMessage('No valid clients found in the data. Please check the format.');
+        setErrorMessage('No valid clients found');
         setImportStatus('error');
         return;
       }
@@ -167,88 +136,42 @@ export default function DataImport({ onImport, onClose }: DataImportProps) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content import-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px' }}>
         <div className="modal-header">
           <h2>Import Data from Google Sheets</h2>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
 
-        <div className="import-content">
-          <div className="import-method-selector">
-            <button
-              className={importMethod === 'csv' ? 'active' : ''}
-              onClick={() => setImportMethod('csv')}
-            >
-              <FileText size={20} />
-              CSV/TSV Import
-            </button>
-            <button
-              className={importMethod === 'manual' ? 'active' : ''}
-              onClick={() => setImportMethod('manual')}
-            >
-              <Upload size={20} />
-              File Upload
-            </button>
-          </div>
-
-          <div className="import-instructions">
-            <h3>How to import:</h3>
-            <ol>
+        <div style={{ padding: '2rem' }}>
+          <div style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: 'var(--radius)', marginBottom: '1.5rem', border: '1px solid var(--border)' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>How to import:</h3>
+            <ol style={{ marginLeft: '1.5rem', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
               <li>Open your Google Sheet</li>
               <li>Select all data (Ctrl+A or Cmd+A)</li>
               <li>Copy (Ctrl+C or Cmd+C)</li>
               <li>Paste into the text area below</li>
             </ol>
-            <p className="note">
-              The import expects: Client Name (column 2), Pack Name (column 3), and dates in subsequent columns.
-            </p>
           </div>
 
           <div className="form-group">
-            <label>
-              {importMethod === 'csv' ? 'Paste your spreadsheet data here:' : 'Upload CSV file:'}
-            </label>
-            {importMethod === 'csv' ? (
-              <textarea
-                value={csvData}
-                onChange={(e) => setCsvData(e.target.value)}
-                onPaste={handlePaste}
-                placeholder="Paste your Google Sheets data here (Ctrl+V or Cmd+V)..."
-                rows={10}
-                className="import-textarea"
-              />
-            ) : (
-              <div className="file-upload-area">
-                <input
-                  type="file"
-                  accept=".csv,.tsv,.txt"
-                  onChange={handleFileUpload}
-                  id="file-upload"
-                  style={{ display: 'none' }}
-                />
-                <label htmlFor="file-upload" className="file-upload-label">
-                  <Upload size={24} />
-                  <span>Click to upload or drag and drop</span>
-                  <span className="file-upload-hint">CSV, TSV, or TXT files</span>
-                </label>
-                {csvData && (
-                  <div className="file-preview">
-                    <FileText size={16} />
-                    <span>File loaded ({csvData.split('\n').length} lines)</span>
-                  </div>
-                )}
-              </div>
-            )}
+            <label>Paste your spreadsheet data here:</label>
+            <textarea
+              value={csvData}
+              onChange={(e) => setCsvData(e.target.value)}
+              placeholder="Paste your Google Sheets data here..."
+              rows={10}
+              style={{ fontFamily: 'monospace', fontSize: '0.875rem', background: 'var(--bg-primary)', border: '1px solid var(--border)' }}
+            />
           </div>
 
           {importStatus === 'error' && (
-            <div className="import-error">
+            <div style={{ padding: '1.25rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 'var(--radius)', color: '#f87171', marginBottom: '1rem', fontWeight: 500 }}>
               {errorMessage}
             </div>
           )}
 
           {importStatus === 'success' && (
-            <div className="import-success">
+            <div style={{ padding: '1.25rem', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: 'var(--radius)', color: '#34d399', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 600 }}>
               <CheckCircle size={20} />
               <span>Data imported successfully!</span>
             </div>

@@ -19,7 +19,6 @@ export default function TopNav({ activeView, onViewChange, onNewPost, onImport }
           <button
             className={activeView === 'overview' ? 'active' : ''}
             onClick={() => onViewChange('overview')}
-            title="Dashboard Overview"
           >
             <LayoutDashboard size={18} />
             <span>Overview</span>
@@ -27,7 +26,6 @@ export default function TopNav({ activeView, onViewChange, onNewPost, onImport }
           <button
             className={activeView === 'calendar' ? 'active' : ''}
             onClick={() => onViewChange('calendar')}
-            title="Calendar View"
           >
             <Calendar size={18} />
             <span>Calendar</span>
@@ -35,7 +33,6 @@ export default function TopNav({ activeView, onViewChange, onNewPost, onImport }
           <button
             className={activeView === 'clients' ? 'active' : ''}
             onClick={() => onViewChange('clients')}
-            title="Client Management"
           >
             <Users size={18} />
             <span>Clients</span>
@@ -43,7 +40,6 @@ export default function TopNav({ activeView, onViewChange, onNewPost, onImport }
           <button
             className={activeView === 'posts' ? 'active' : ''}
             onClick={() => onViewChange('posts')}
-            title="All Posts"
           >
             <FileText size={18} />
             <span>All Posts</span>
@@ -51,11 +47,11 @@ export default function TopNav({ activeView, onViewChange, onNewPost, onImport }
         </div>
 
         <div className="top-nav-actions">
-          <button className="top-nav-action-btn" onClick={onImport} title="Import from Google Sheets">
+          <button className="top-nav-action-btn" onClick={onImport}>
             <Upload size={18} />
             <span>Import from Sheets</span>
           </button>
-          <button className="top-nav-action-btn primary" onClick={onNewPost} title="Create New Post">
+          <button className="top-nav-action-btn primary" onClick={onNewPost}>
             + New Post
           </button>
         </div>
