@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import TopNav from './TopNav';
-import Sidebar from './Sidebar';
 import CalendarView from './CalendarView';
 import ClientManagement from './ClientManagement';
 import PostEditor from './PostEditor';
@@ -100,14 +99,7 @@ export default function Dashboard() {
         onNewPost={handleNewPost}
         onImport={() => setIsImportOpen(true)}
       />
-      <div className="dashboard-content">
-        <Sidebar 
-          activeView={activeView} 
-          onViewChange={setActiveView}
-          onNewPost={handleNewPost}
-          onImport={() => setIsImportOpen(true)}
-        />
-        <main className="dashboard-main">
+      <main className="dashboard-main">
         {activeView === 'overview' && (
           <DashboardOverview 
             clients={clients}
@@ -172,8 +164,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-        </main>
-      </div>
+      </main>
       {isPostEditorOpen && (
         <PostEditor
           post={selectedPost}

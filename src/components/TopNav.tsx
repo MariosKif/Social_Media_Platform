@@ -53,7 +53,7 @@ export default function TopNav({ activeView, onViewChange, onNewPost, onImport }
         <div className="top-nav-actions">
           <button className="top-nav-action-btn" onClick={onImport} title="Import from Google Sheets">
             <Upload size={18} />
-            <span>Import</span>
+            <span>Import from Sheets</span>
           </button>
           <button className="top-nav-action-btn primary" onClick={onNewPost} title="Create New Post">
             + New Post
