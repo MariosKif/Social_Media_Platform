@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "astro": "^5.0.0",
-    "handsontable": "^14.0.0",
-    "hyperformula": "^2.5.0"
+    "date-fns": "^3.0.0",
+    "lucide-react": "^0.344.0"
   },
   "devDependencies": {
     "@astrojs/react": "^3.0.0",
