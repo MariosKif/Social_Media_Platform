@@ -55,7 +55,116 @@ const { title } = Astro.props;
 
   .dashboard-container {
     display: flex;
+    flex-direction: column;
     height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Top Navigation */
+  .top-nav {
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    z-index: 100;
+    position: relative;
+  }
+
+  .top-nav-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 2rem;
+  }
+
+  .top-nav-brand h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .top-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .top-nav-links button {
+    padding: 0.625rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .top-nav-links button:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  .top-nav-links button.active {
+    background: var(--bg-tertiary);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .top-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .top-nav-action-btn {
+    padding: 0.625rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .top-nav-action-btn:hover {
+    background: var(--border);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .top-nav-action-btn.primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  .top-nav-action-btn.primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+  }
+
+  .dashboard-content {
+    display: flex;
+    flex: 1;
     overflow: hidden;
   }
 
