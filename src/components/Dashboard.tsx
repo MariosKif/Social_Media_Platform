@@ -4,6 +4,7 @@ import CalendarView from './CalendarView';
 import ClientManagement from './ClientManagement';
 import PostEditor from './PostEditor';
 import DashboardOverview from './DashboardOverview';
+import DataImport from './DataImport';
 import { Client, Post } from '../types';
 
 export default function Dashboard() {
@@ -12,6 +13,7 @@ export default function Dashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isPostEditorOpen, setIsPostEditorOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -79,12 +81,23 @@ export default function Dashboard() {
     setIsPostEditorOpen(true);
   };
 
+  const handleImport = (importedClients: Client[], importedPosts: Post[]) => {
+    // Merge imported clients with existing (avoid duplicates by name)
+    const existingClientNames = new Set(clients.map(c => c.name.toLowerCase()));
+    const newClients = importedClients.filter(c => !existingClientNames.has(c.name.toLowerCase()));
+    setClients([...clients, ...newClients]);
+
+    // Add imported posts
+    setPosts([...posts, ...importedPosts]);
+  };
+
   return (
     <div className="dashboard-container">
       <Sidebar 
         activeView={activeView} 
         onViewChange={setActiveView}
         onNewPost={handleNewPost}
+        onImport={() => setIsImportOpen(true)}
       />
       <main className="dashboard-main">
         {activeView === 'overview' && (
@@ -161,6 +174,12 @@ export default function Dashboard() {
             setIsPostEditorOpen(false);
             setSelectedPost(null);
           }}
+        />
+      )}
+      {isImportOpen && (
+        <DataImport
+          onImport={handleImport}
+          onClose={() => setIsImportOpen(false)}
         />
       )}
     </div>

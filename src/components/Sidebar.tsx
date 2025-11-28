@@ -1,12 +1,13 @@
-import { Calendar, Users, FileText, LayoutDashboard } from 'lucide-react';
+import { Calendar, Users, FileText, LayoutDashboard, Upload } from 'lucide-react';
 
 interface SidebarProps {
   activeView: 'overview' | 'calendar' | 'clients' | 'posts';
   onViewChange: (view: 'overview' | 'calendar' | 'clients' | 'posts') => void;
   onNewPost: () => void;
+  onImport: () => void;
 }
 
-export default function Sidebar({ activeView, onViewChange, onNewPost }: SidebarProps) {
+export default function Sidebar({ activeView, onViewChange, onNewPost, onImport }: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -43,6 +44,10 @@ export default function Sidebar({ activeView, onViewChange, onNewPost }: Sidebar
         </button>
       </nav>
       <div className="sidebar-footer">
+        <button className="btn-import" onClick={onImport}>
+          <Upload size={18} />
+          Import from Sheets
+        </button>
         <button className="btn-new-post" onClick={onNewPost}>
           + New Post
         </button>
